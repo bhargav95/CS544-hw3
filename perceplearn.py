@@ -44,19 +44,28 @@ def learn(ipfile):
                 current_features = dict()
 
                 for word in sent:
-                    if word in current_features:
-                        current_features[word] += 1
+                    lower = word.lower()
+
+                    if lower in stopwords:
+                        continue
+
+                    if lower in current_features:
+                        current_features[lower] += 1
                     else:
-                        current_features[word] = 0.0
+                        current_features[lower] = 0.0
 
                 # print current_features
 
-                # TF Activation
+                # Activation
                 tf_activation = tf_bias
+                pn_activation = pn_bias
                 for k, v in current_features.iteritems():
 
                     if k in tf_features:
                         tf_activation += tf_features[k]
+
+                    if k in pn_features:
+                        pn_activation += pn_features[k]
 
                 # TF Update
                 if tf_y[class1] * tf_activation <= 0:
@@ -71,14 +80,7 @@ def learn(ipfile):
                         else:
                             tf_features[k] = tf_y[class1] * current_features[k]
 
-                # PN Activation
-                pn_activation = pn_bias
-                for k, v in current_features.iteritems():
-
-                    if k in pn_features:
-                        pn_activation += pn_features[k]
-
-                # pn Update
+                # PN Update
                 if pn_y[class2] * pn_activation <= 0:
                     pn_bias += pn_y[class2]
                     for k, v in current_features.iteritems():
@@ -101,6 +103,14 @@ def learn(ipfile):
     pn_features = {x: y for x, y in pn_features.items() if y != 0}
     print len(pn_features)
 
+    with open("averagedmodel.txt", "w") as op:
+        json.dump({"TrueFalse": {"features": tf_features, "bias": tf_bias},
+                   "PosNeg": {"features": pn_features, "bias": pn_bias}}, op, indent=1)
+
+    with open("vanillamodel.txt", "w") as op:
+        json.dump({"TrueFalse": {"features": tf_features, "bias": tf_bias},
+                   "PosNeg": {"features": pn_features, "bias": pn_bias}}, op, indent=1)
+
 
 if __name__ == "__main__":
     assert len(sys.argv) == 2
@@ -109,4 +119,4 @@ if __name__ == "__main__":
 
     learn(sys.argv[1])
 
-    print time.time()-start
+    print time.time() - start
