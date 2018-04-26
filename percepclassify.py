@@ -23,8 +23,8 @@ def classify(modelfile, ipfile):
 
         data = json.load(f2)
 
-        tf_features = data['TrueFalse']['features']
-        tf_bias = data['TrueFalse']['bias']
+        tf_features = data['TrueFake']['features']
+        tf_bias = data['TrueFake']['bias']
 
         pn_features = data['PosNeg']['features']
         pn_bias = data['PosNeg']['bias']
@@ -46,20 +46,20 @@ def classify(modelfile, ipfile):
                 if lower in current_features:
                     current_features[lower] += 1
                 else:
-                    current_features[lower] = 0.0
+                    current_features[lower] = 1.0
 
             tf_activation = tf_bias
             pn_activation = pn_bias
             for k, v in current_features.iteritems():
 
                 if k in tf_features:
-                    tf_activation += tf_features[k]
+                    tf_activation += tf_features[k]*v
 
                 if k in pn_features:
-                    pn_activation += pn_features[k]
+                    pn_activation += pn_features[k]*v
 
             if tf_activation < 0:
-                class1 = "False"
+                class1 = "Fake"
             else:
                 class1 = "True"
 
