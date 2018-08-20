@@ -1,4 +1,8 @@
-Corpus for Homework 2, USC CSCI 544, Spring 2018
+# CS544-hw3
+
+Perceptron classifiers (vanilla and averaged) to identify hotel reviews as either true or fake, and either positive or negative.
+
+Corpus for Homework 3, USC CSCI 544, Spring 2018
 
 Adapted from the Deceptive Opinion Spam Corpus v1.4
 
