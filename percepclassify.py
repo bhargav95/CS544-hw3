@@ -7,16 +7,21 @@ import math
 
 
 def classify(modelfile, ipfile):
-    stopwords = {"ourselves", "hers", "between", "yourself", "but", "again", "there", "about", "once", "during", "out",
-                 "very", "having", "with", "they", "own", "an", "be", "some", "for", "do", "its", "yours", "such",
-                 "into", "of", "most", "itself", "other", "off", "is", "s", "am", "or", "who", "as", "from", "him",
-                 "each", "the", "themselves", "until", "below", "are", "we", "these", "your", "his", "through", "don",
-                 "nor", "me", "were", "her", "more", "himself", "this", "down", "should", "our", "their", "while",
-                 "above", "both", "up", "to", "ours", "had", "she", "all", "no", "when", "at", "any", "before", "them",
-                 "same", "and", "been", "have", "in", "will", "on", "does", "yourselves", "then", "that", "because",
-                 "what", "over", "why", "so", "can", "did", "not", "now", "under", "he", "you", "herself", "has",
-                 "just", "where", "too", "only", "myself", "which", "those", "i", "after", "few", "whom", "t", "being",
-                 "if", "theirs", "my", "against", "a", "by", "doing", "it", "how", "further", "was", "here", "than"}
+    stopwords = ['i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', "you're", "you've", "you'll",
+                 "you'd", 'your', 'yours', 'yourself', 'yourselves', 'he', 'him', 'his', 'himself', 'she', "she's",
+                 'her', 'hers', 'herself', 'it', "it's", 'its', 'itself', 'they', 'them', 'their', 'theirs',
+                 'themselves', 'what', 'which', 'who', 'whom', 'this', 'that', "that'll", 'these', 'those', 'am', 'is',
+                 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'having', 'do', 'does', 'did',
+                 'doing', 'a', 'an', 'the', 'and', 'but', 'if', 'or', 'because', 'as', 'until', 'while', 'of', 'at',
+                 'by', 'for', 'with', 'about', 'against', 'between', 'into', 'through', 'during', 'before', 'after',
+                 'above', 'below', 'to', 'from', 'up', 'down', 'in', 'out', 'on', 'off', 'over', 'under', 'again',
+                 'further', 'then', 'once', 'here', 'there', 'when', 'where', 'why', 'how', 'all', 'any', 'both',
+                 'each', 'few', 'more', 'most', 'other', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same',
+                 'so', 'than', 'too', 'very', 's', 't', 'can', 'will', 'just', 'don', "don't", 'should', "should've",
+                 'now', 'd', 'll', 'm', 'o', 're', 've', 'y', 'ain', 'aren', "aren't", 'couldn', "couldn't", 'didn',
+                 "didn't", 'doesn', "doesn't", 'hadn', "hadn't", 'hasn', "hasn't", 'haven', "haven't", 'isn', "isn't",
+                 'ma', 'mightn', "mightn't", 'mustn', "mustn't", 'needn', "needn't", 'shan', "shan't", 'shouldn',
+                 "shouldn't", 'wasn', "wasn't", 'weren', "weren't", 'won', "won't", 'wouldn', "wouldn't"]
     regex = re.compile('[%s]' % re.escape(string.punctuation))
 
     with open(ipfile) as f, open(modelfile) as f2, open("percepoutput.txt", "w") as op:
@@ -32,10 +37,12 @@ def classify(modelfile, ipfile):
         for i in f.readlines():
 
             line = regex.sub(' ', i).split()
+
             key = line[0]
             sent = line[1:]
 
             current_features = dict()
+            current_features['sent_size'] = len(re.split(r'[.!?]+', i))
 
             for word in sent:
                 lower = word.lower()
@@ -53,10 +60,10 @@ def classify(modelfile, ipfile):
             for k, v in current_features.iteritems():
 
                 if k in tf_features:
-                    tf_activation += tf_features[k]*v
+                    tf_activation += tf_features[k] * v
 
                 if k in pn_features:
-                    pn_activation += pn_features[k]*v
+                    pn_activation += pn_features[k] * v
 
             if tf_activation < 0:
                 class1 = "Fake"
